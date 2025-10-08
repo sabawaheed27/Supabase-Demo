@@ -4,7 +4,9 @@ import LogInForm from "./LogoInForm";
 
 const LogInPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen h-screen w-screen flex items-center justify-center bg-cover bg-center " 
+    style={{backgroundImage: "url('/images/login.jpg')"}}>
+      
       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
         <h2 className="font-bold text-3xl mb-6 text-center text-gray-800">
           Log In

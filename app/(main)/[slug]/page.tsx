@@ -2,6 +2,8 @@
 import { createClient } from "@/utils/supabase/server-client";
 import DeleteButton from "./DeleteButton";
 import { getSinglePost } from "@/utils/supabase/queries";
+import EditButton from "./EditButton";
+
 
 const SinglePost = async ({ params }: { params: { slug: string }}) => {
     const { slug } = await params;
@@ -21,6 +23,13 @@ const SinglePost = async ({ params }: { params: { slug: string }}) => {
         <>
             <div className="max-w-3xl mx-auto my-12 p-6 rounded-lg shadow-md bg-white">
                 <h1 className="text-3xl font-bold mb-4">{data.title}</h1>
+                {data.image_url && (
+                    <img
+                        src={data.image_url}
+                        alt={data.title}
+                        className="w-full h-auto object-cover rounded-lg my-4"
+                    />
+                )}
                 <p className="mt-6 text-gray-500 text-right">
                     By {data.users.username}
                 </p>
@@ -35,6 +44,7 @@ const SinglePost = async ({ params }: { params: { slug: string }}) => {
             {isAuthor && (
                 <div className="w-2xl p-4 m-auto mt-4 flex border-2 border-gray-700 rounded-2xl bg-gray-200 text-center text-gray-700">
                     <DeleteButton postId={data.id!} />
+                    <EditButton slug={slug} />
                 </div>
             )}
         </>

@@ -10,36 +10,68 @@ import ErrorMessage from "@/app/components/ErrorMessage";
 
 const LogInForm = () => {
     const {
-    register,
+        register,
         handleSubmit,
-        formState: { errors }} = useForm({
-        resolver: zodResolver(logInSchema)
+        formState: { errors } } = useForm({
+            resolver: zodResolver(logInSchema)
         })
 
-        const {mutate, isPending, error} = useMutation({
-            mutationFn: LogIn,
-        })
+    const { mutate, isPending, error } = useMutation({
+        mutationFn: LogIn,
+    })
     return (
         <>
-            <form onSubmit={handleSubmit(values =>  mutate(values))} className="flex flex-col mb-4  ">
+            <form onSubmit={handleSubmit(values => mutate(values))}
+                className="flex flex-col gap-y-4">
 
-                <fieldset>
-                    <label htmlFor="email">Enter your Email</label>
-                    <input className="ml-2 mb-4" {...register('email')} type="email" id="email" name="email" placeholder="Enter your Email" />
+                {/* Email */}
+                <fieldset className="flex flex-col space-y-1">
+                    <label
+                        htmlFor="email"
+                        className="text-sm font-medium text-gray-700">
+                        Email
+                    </label>
+                    <input
+                        {...register('email')}
+                        type="email"
+                        id="email"
+                        placeholder="Enter your Email"
+                        className="w-full rounded-lg border-gray-300 px-4 py-2 text-gray-900 shadow-sm
+                     focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"/>
                     {errors.email && <ErrorMessage message={errors.email.message!} />}
                 </fieldset>
-                <fieldset>
-                    <label htmlFor="password">Password</label>
-                    <input type="password" className="ml-2 mb-4 px-2" {...register('password')} id="password" name="password" placeholder="Enter your password" />
+                {/* Password */}
+                <fieldset className="flex flex-col space-y-1">
+                    <label
+                        htmlFor="password"
+                        className="text-sm font-medium text-gray-700">
+                        Password
+                    </label>
+                    <input
+                        {...register('password')}
+                        type="password"
+                        id="password"
+                        placeholder="Enter your password"
+                        className="w-full rounded-lg border-gray-300 px-4 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus: ring-2 focus: ring-blue-200 transition" />
                     {errors.password && <ErrorMessage message={errors.password.message!} />}
-
                 </fieldset>
-                <button className="button-secondary w-1/2 m-auto">{isPending ? 'Loading...' : 'Log In'}</button>
+                {/* Submit Button */}
+                <button
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 
+                     rounded-lg shadow-md transition duration-200 disabled:opacity-70"
+                    disabled={isPending}>
+                    {isPending ? "Loading..." : "Log In"}
+                </button>
 
             </form>
-            {error && <ErrorMessage message={error.message} />}
-          
+            {error && (
+                <div className="mt-4">
+                    <ErrorMessage message={error.message} />
+                </div>
+            )}
         </>
     )
 }
-export default LogInForm;
+
+export default LogInForm

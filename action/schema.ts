@@ -13,4 +13,13 @@ export const signUpSchema = z.object({
 export const postSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
     content: z.string().min(3, "Content must be at least 3 characters"),
+     image: z
+    .instanceof(File)
+    .optional()
+    .refine((file) => !file || file.size <= 5_000_000, "Max 5MB upload size")
+    .refine(
+      (file) =>
+        !file || ["image/jpeg", "image/png", "image/webp"].includes(file.type),
+      "Only .jpg, .png, .webp allowed"
+    ),
 })

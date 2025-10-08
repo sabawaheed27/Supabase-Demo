@@ -58,3 +58,10 @@ auth/login/page.tsx → shows the login form.
 
 
 npm i react-hook-form  @hookform/resolvers 
+
+SUPABASE:
+
+In your code, Supabase is the backend.
+Think of it like your project’s database + authentication + API layer all in one.
+Supabase uses PostgreSQL under the hood.
+In your getHomePosts function, you’re querying Supabase to get a list of posts and their associated user data.
