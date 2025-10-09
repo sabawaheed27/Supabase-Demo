@@ -1,13 +1,17 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server-client";
+
+import { Database } from "@/utils/supabase/database.type";
 import { postSchema } from "./schema"; 
 import { uploadImage } from "@/utils/uploadImage";
 import { slugify } from "@/utils/slugify";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server-client";
 
 export default async function CreatePost(formData: FormData) {
+  let slug: string;
+
   try {
     const supabase = await createClient();
 
@@ -37,24 +41,25 @@ export default async function CreatePost(formData: FormData) {
     const { data: parsedData } = validatedFields;
 
     // 3. Upload image if it exists
-    let imageUrl: string | null = null;
+    let imageUrl: string | undefined = undefined;
     if (parsedData.image && parsedData.image.size > 0) {
       imageUrl = await uploadImage(parsedData.image);
     }
 
     // 4. Generate a slug
-    const slug = slugify(parsedData.title);
+    slug = slugify(parsedData.title);
+
+    // Define the post payload with the correct type from your database schema
+    const postPayload: Database['public']['Tables']['posts']['Insert'] = {
+      user_id: user.id,
+      slug,
+      title: parsedData.title,
+      content: parsedData.content,
+      image_url: imageUrl,
+    };
 
     // 5. Insert post into the database and wait for it to finish
-    const { error: insertError } = await supabase.from("posts").insert([
-      {
-        user_id: user.id,
-        slug,
-        title: parsedData.title,
-        content: parsedData.content,
-        image_url: imageUrl,
-      },
-    ]);
+    const { error: insertError } = await supabase.from("posts").insert(postPayload);
 
     if (insertError) {
       console.error("Supabase insert error:", insertError);
@@ -68,8 +73,6 @@ export default async function CreatePost(formData: FormData) {
 
   // 6. Revalidate paths and redirect on success
   revalidatePath("/");
-  // We can't redirect from within a try/catch block, so we do it here.
-  // The slug needs to be calculated outside the try block to be accessible here.
-  const title = formData.get("title") as string;
-  redirect(`/${slugify(title)}`);
+  // Redirect to the newly created post's page
+  redirect(`/${slug}`);
 }

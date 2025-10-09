@@ -1,7 +1,9 @@
 
 import { v4 as uuidv4 } from "uuid";
-import { createClient } from "./supabase/server-client";
 import { slugify } from "./slugify";
+import { createClient } from "./supabase/server-client";
+
+
 
 export async function uploadImage(file: File): Promise<string> {
   const supabase = await createClient();
