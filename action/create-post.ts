@@ -49,17 +49,14 @@ export default async function CreatePost(formData: FormData) {
     // 4. Generate a slug
     slug = slugify(parsedData.title);
 
-    // Define the post payload with the correct type from your database schema
-    const postPayload: Database['public']['Tables']['posts']['Insert'] = {
+    // 5. Insert post into the database and wait for it to finish
+    const { error: insertError } = await supabase.from("posts").insert({
       user_id: user.id,
       slug,
       title: parsedData.title,
       content: parsedData.content,
       image_url: imageUrl,
-    };
-
-    // 5. Insert post into the database and wait for it to finish
-    const { error: insertError } = await supabase.from("posts").insert(postPayload);
+    });
 
     if (insertError) {
       console.error("Supabase insert error:", insertError);
