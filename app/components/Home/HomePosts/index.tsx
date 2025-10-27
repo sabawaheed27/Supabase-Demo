@@ -40,7 +40,7 @@ const HomePosts = ({ posts }: { posts: HomePostType }) => {
                                     <img
                                         src={image_url}
                                         alt={title}
-                                        className="w-full h-40 object-cover rounded mb-4"/>)}
+                                        className="w-full h-40 object-cover rounded mb-4" />)}
                                 <h2 className="font-medium text-lg text-blue-100 mb-3 pb-4">
                                     {title}
                                 </h2>

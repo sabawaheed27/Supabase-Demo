@@ -1,7 +1,6 @@
 "use server";
 
 
-import { Database } from "@/utils/supabase/database.type";
 import { postSchema } from "./schema"; 
 import { uploadImage } from "@/utils/uploadImage";
 import { slugify } from "@/utils/slugify";

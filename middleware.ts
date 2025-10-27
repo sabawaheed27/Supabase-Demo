@@ -42,4 +42,7 @@ export const middleware = async (request: NextRequest) => {
 
 }
 
-
+//middleware handles security and routing logic.
+//Connect to Supabase using server-side auth (via cookies).
+//Check if the user is logged in.
+//Redirect to /auth/login if someone tries to open a protected page without being logged in.

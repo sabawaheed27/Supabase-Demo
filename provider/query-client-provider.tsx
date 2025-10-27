@@ -2,18 +2,18 @@
 
 import { QueryClient, QueryClientProvider as OriginalQueryClientProvider } from '@tanstack/react-query'
 
-const makeQueryClient = () => {
+const makeQueryClient = () => {//Creates a fresh QueryClient.
     return new QueryClient()
-}//Creates a fresh QueryClient.
-
-let browserQueryClient: QueryClient | undefined = undefined;
-//Holds a single instance of QueryClient on the browser so you don’t keep creating new ones every time React re-renders.
+}
+//This single line is doing two distinct things: declaring a type and assigning an initial value.
+let browserQueryClient: QueryClient | null = null;
+//On the server, Next.js might run your component multiple times (for SSR, streaming, etc.), so you never want to reuse a single global client there — it could cause data leaks between users.
+//But in the browser, you do want to reuse one so you don’t reset your cache on every render.
 export const getQueryClient = () => {
-    if (typeof window === 'undefined') {
-        //server always make a fresh one
+    if (typeof window === 'undefined') {        //server always make a fresh one
         return makeQueryClient();
-    } else {
-// Browser → reuse the same one
+    } else {// Browser → reuse the same one
+
         if(!browserQueryClient){
             browserQueryClient = makeQueryClient();
 

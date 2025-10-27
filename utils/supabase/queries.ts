@@ -1,6 +1,8 @@
 import { createClient } from "./browser-client"
 //createClient → a helper function that creates a Supabase client for making API calls.
 import { type QueryData } from "@supabase/supabase-js"
+
+
 export const getHomePosts = async (supabase: ReturnType<typeof createClient>) => {
     return await supabase
         .from('posts')
@@ -10,11 +12,14 @@ export const getHomePosts = async (supabase: ReturnType<typeof createClient>) =>
 
 export const getSinglePost = async (slug: string) => {
     const supabase = createClient()
-    return await supabase
+    // return await supabase
+    const { data, error } = await supabase
         .from('posts')
-        .select('id, title, content, slug, image_url, user_id, users("username")')
+         .select('id, title, content, slug, image_url, user_id, users("username")')
         .eq('slug', slug)
         .single()
+        
+  return { data, error };
 }
 
 export const getSearchedPosts = async (searchTerm: string) => {

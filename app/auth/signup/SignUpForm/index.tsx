@@ -1,5 +1,5 @@
 'use client'
-import { useForm } from "react-hook-form"
+import { useForm } from "react-hook-form" //  validation, submission, management
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation } from "@tanstack/react-query"
 import { SignUp } from "@/action/sign-up"
@@ -113,3 +113,18 @@ const SignUpForm = () => {
 }
 
 export default SignUpForm
+
+
+// Zod speaks the language of data shapes and validation rules (e.g., "this must be an email," "this password must be 6 characters long").
+// React Hook Form speaks the language of form state management (e.g., "this input is invalid," "here is the error message").
+// zodResolver sits in the middle, translating Zod's validation results into a format that React Hook Form can understand and use to update the UI.
+
+
+// The user fills in their email, username, and password.
+// They click the "Sign Up" button.
+// react-hook-form's handleSubmit validates the data.
+// If validation passes, mutate(value) is called.
+// isPending immediately becomes true, updating the button's state.
+// The SignUp server action runs.
+// On Success: The server action redirects the user, and the form component unmounts.
+// On Failure: The SignUp action throws an error. isPending becomes false, and the error object is populated, causing the error message to appear on the screen.
