@@ -4,34 +4,51 @@ import { type QueryData } from "@supabase/supabase-js"
 
 
 export const getHomePosts = async (supabase: ReturnType<typeof createClient>) => {
-    return await supabase
-        .from('posts')
-        .select('id, title, slug, image_url, users("username")')
-        .order('created_at', { ascending: false })
+  return await supabase
+    .from('posts')
+    .select('id, title, slug, image_url, users("username")')
+    .order('created_at', { ascending: false })
 }
 
 export const getSinglePost = async (slug: string) => {
-    const supabase = createClient()
-    // return await supabase
-    const { data, error } = await supabase
-        .from('posts')
-         .select('id, title, content, slug, image_url, user_id, users("username")')
-        .eq('slug', slug)
-        .single()
-        
+  const supabase = createClient()
+  // return await supabase
+  const { data, error } = await supabase
+    .from('posts')
+    .select('id, title, content, slug, image_url, user_id, users("username")')
+    .eq('slug', slug)
+    .single()
+
   return { data, error };
 }
 
 export const getSearchedPosts = async (searchTerm: string) => {
-    const supabase = createClient()
+  const supabase = createClient()
 
-    return (await supabase
-        .from('posts')
-        .select('id,title, slug')
-        .ilike('title', `%${searchTerm}%`)
-    )
+  return (await supabase
+    .from('posts')
+    .select('id,title, slug')
+    .ilike('title', `%${searchTerm}%`)
+  )
 
 }
+export async function getCommentsForPost(postId: number) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("comments") // Corrected in previous step
+    .select("id, content, created_at, users(username, id)")
+    .eq("post_id", postId)
+    .order("created_at", { ascending: true });
+  if (error) {
+    console.error("Failed to fetch comments:", error);
+    return { data: [], error };
+  }
+
+  return { data, error: null };
+}
+
+export type CommentWithUser = QueryData<ReturnType<typeof getCommentsForPost>>[number];
 
 export type HomePostType = QueryData<ReturnType<typeof getHomePosts>>
 

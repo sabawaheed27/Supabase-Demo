@@ -1,7 +1,6 @@
 
 import { getHomePosts } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server-client";
- import cashe from "next/cache"
 import Link from "next/link";
 
 

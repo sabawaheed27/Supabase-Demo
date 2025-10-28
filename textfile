@@ -65,3 +65,10 @@ Supabase is the backend.
 Think of it like your project’s database + authentication + API layer all in one.
 Supabase uses PostgreSQL under the hood.
 In your getHomePosts function, you’re querying Supabase to get a list of posts and their associated user data.
+
+
+npm install supabase --save-dev
+npx supabase login
+npx supab
+ase gen types typescript --project-id 123hfjwjvj > utils/supabase/database.types.ts
+Debugger attached.

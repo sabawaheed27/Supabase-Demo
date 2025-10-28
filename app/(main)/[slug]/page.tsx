@@ -3,19 +3,28 @@ import { createClient } from "@/utils/supabase/server-client";
 import DeleteButton from "./DeleteButton";
 import { getSinglePost } from "@/utils/supabase/queries";
 import EditButton from "./EditButton";
+import CommentList from "./comments/CommentList";
+import CommentForm from "./comments/CommentForm";
 
+const SinglePost = async ({ params }: { params: { slug: string } }) => {
+    const { slug } =  await params;
+    const supabase = await createClient();
 
-const SinglePost = async ({ params }: { params: { slug: string }}) => {
-    const { slug } = await params;
-    const {data, error}= await getSinglePost(slug)
-    
+    // Fetch post data
+    const { data, error } = await getSinglePost(slug);
+
     if (error || !data) {
-        return <div className="text-center text-red-500">Post not found or an error occurred.</div>
-
+        return (
+            <div className="text-center text-red-500">
+                Post not found or an error occurred.
+            </div>
+        );
     }
 
-    const supabase = await createClient();
-    const {data: {user}}= await supabase.auth.getUser()
+    // Get current user
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
 
     const isAuthor = user?.id === data.user_id;
 
@@ -47,8 +56,26 @@ const SinglePost = async ({ params }: { params: { slug: string }}) => {
                     <EditButton slug={slug} />
                 </div>
             )}
+
+            {/*Add Comments Section Here */}
+            <div className="max-w-2xl mx-auto mt-8 p-6 bg-white rounded-lg shadow">
+                <h2 className="text-xl font-semibold mb-4">Comments</h2>
+
+                {/* Comment list (shows all comments) */}
+                <CommentList postId={data.id} postSlug={data.slug} />
+
+                {/* Comment form (only visible if logged in) */}
+                {user ? (
+                    <CommentForm postId={data.id} postSlug={data.slug} />
+                ) : (
+                    <p className="text-gray-500 mt-4">
+                        Please log in to add a comment.
+                    </p>
+                )}
+            </div>
         </>
     );
 };
 
 export default SinglePost;
+
