@@ -17,7 +17,7 @@ export const revalidate = 600;
     <div className="w-[80%] mx-auto">
       
         {data && data.map(({id, title, slug, users})=>
-        <Link href={`/${slug}`} className="block border-1 rounded mt-4  p-4" key={id}>
+        <Link href={`/${slug}`} className="block border rounded mt-4  p-4" key={id}>
           <h2 className="font-bold text-xl">{title}</h2>
           <div className= "text-right">by{users.username}</div>
         </Link>)}

@@ -9,16 +9,22 @@ export async function deleteComment(commentId: number, postSlug: string) {
 
   if (!user) return { error: "Not authenticated" };
 
-const { error } = await supabase
+  const { error, count } = await supabase
     .from('comments')
     .delete()
     .eq("id", commentId)
-    .eq("user_id", user.id); // Only allow comment owner to delete
+    .eq("user_id", user.id) // Only allow comment owner to delete
+    .select() // Ask Supabase to return the number of deleted rows
+    .single(); // We expect to delete one row
 
 
   if (error) {
     console.error("Error deleting comment:", error);
     return { error: "Failed to delete comment" };
+  }
+
+  if (count === 0) {
+    return { error: "Comment not found or you don't have permission to delete it." };
   }
 
   revalidatePath(`/${postSlug}`);

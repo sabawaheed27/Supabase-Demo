@@ -37,9 +37,10 @@ export async function getCommentsForPost(postId: number) {
 
   const { data, error } = await supabase
     .from("comments") // Corrected in previous step
-    .select("id, content, created_at, users(username, id)")
+    .select("id, content, created_at, user_id, users(username, id)")
     .eq("post_id", postId)
     .order("created_at", { ascending: true });
+
   if (error) {
     console.error("Failed to fetch comments:", error);
     return { data: [], error };
