@@ -1,15 +1,15 @@
-🖥️ On the server (SSR)
+ On the server (SSR)
 
 The server is like a library where many people (users) come.
 If everyone used the same notebook, people could accidentally see each other’s notes.
 So → every time a new person (user request) comes, the server gives them a fresh notebook (a new QueryClient).
-✅ This keeps each user’s data separate and private.
+This keeps each user’s data separate and private.
 
-🌐 In the browser (client)
+In the browser (client)
 On your personal computer, you are the only one using it.
 If your app created a new notebook every time you clicked a button or changed a page, you’d lose your notes (the cache).
 So → the browser uses one notebook (a single QueryClient) and reuses it, so your data stays around while you browse.
-✅ This makes your app faster and smoother, because it remembers what it already fetched.
+ This makes your app faster and smoother, because it remembers what it already fetched.
 Server: New notebook for every visitor → no data leaks.
 Browser: One notebook reused → cache stays, no need to re-fetch everything.
 
@@ -34,7 +34,7 @@ Actions: (like SignUp in @/action/sign-up) handle what happens when the form is 
 How Signup Works
 User goes to /auth/signup → Next.js loads SignUpPage.
 Inside SignUpPage, you render <SignUpForm />.
-SignUpForm has a <form action={SignUp}>…</form>.
+SignUpForm has a <form  action={SignUp}>…</form>.
 This means when the user submits the form, the server action SignUp is called.
 SignUp (in /actions/sign-up.ts) will actually create the user account.
 
@@ -70,5 +70,5 @@ In your getHomePosts function, you’re querying Supabase to get a list of posts
 npm install supabase --save-dev
 npx supabase login
 npx supab
-ase gen types typescript --project-id 123hfjwjvj > utils/supabase/database.types.ts
+ase gen types typescript --project-id  > utils/supabase/database.types.ts
 Debugger attached.
