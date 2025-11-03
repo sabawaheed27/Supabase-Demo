@@ -28,7 +28,7 @@ export async function editPost(postId: number, updates: { title: string; content
     return { success: true };
   } catch (error) {
     // console.error("Error updating post:", error);
-    // Optionally, return an error object to the client
+   
     return { error: "Failed to update the post." };
   }
 }; 
