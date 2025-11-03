@@ -31,7 +31,7 @@ export default function CommentItem({comment,user,postSlug,}: {
   };
 
   return (
-    <li className="border p-3 rounded relative group">
+    <li className="border p-3 rounded">
       {isEditing ? (
         <div className="flex flex-col gap-2">
           <textarea
@@ -56,22 +56,26 @@ export default function CommentItem({comment,user,postSlug,}: {
           </div>
         </div>
       ) : (
-        <div>
-          <p>{comment.content}</p>
-          <p className="text-sm text-gray-500 mt-1">
-            by {comment.users?.username || 'Unknown user'}
-          </p>
-        </div>
-      )}
+        <div className="flex justify-between items-start gap-4">
+          {/* Comment Content */}
+          <div>
+            <p className="text-gray-800">{comment.content}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              by {comment.users?.username || 'Unknown user'}
+            </p>
+          </div>
 
-      {isAuthor && !isEditing && (
-        <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            onClick={() => setIsEditing(true)}
-            className="text-blue-500 text-xs font-semibold">
-            Edit
-          </button>
-          <DeleteCommentButton commentId={comment.id} postSlug={postSlug} />
+          {/* Action Buttons */}
+          {isAuthor && (
+            <div className="flex gap-2 flex-shrink-0">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="text-blue-500 text-xs font-semibold hover:underline">
+                Edit
+              </button>
+              <DeleteCommentButton commentId={comment.id} postSlug={postSlug} />
+            </div>
+          )}
         </div>
       )}
     </li>

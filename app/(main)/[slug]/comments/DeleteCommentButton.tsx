@@ -22,5 +22,5 @@ export default function DeleteCommentButton({ commentId, postSlug }: { commentId
     });
   };
 
-  return <button onClick={handleClick} disabled={isPending} className="text-red-500 text-sm mt-1 disabled:text-gray-400">Delete</button>;
+  return <button onClick={handleClick} disabled={isPending} className="text-red-500 text-xs font-semibold hover:underline disabled:text-gray-400">Delete</button>;
 }
