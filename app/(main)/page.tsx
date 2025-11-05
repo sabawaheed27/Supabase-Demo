@@ -1,29 +1,39 @@
 
 import { getHomePosts } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server-client";
-import Link from "next/link";
-import { formatDate, timeAgo } from "@/utils/formatDate";
+// import HomePosts from "../components/Home/HomePosts"; 
+import HomePosts from "@/app/components/Home/HomePosts";
 
 export const revalidate = 600;
 
 
 export default async function Home() {
   const supabase = await createClient()
-
+  
   const { data, error } = await getHomePosts(supabase)
-  //  console.log(data)
+  if(error){
+    console.log(error)
+  }
+  const postsWithUrl = await Promise.all(
+    (data || []).map(async (post) => {
+      if (!post) return null;
+       const imageUrl = post.image_url
+        ? supabase.storage.from("posts").getPublicUrl(post.image_url).data.publicUrl
+      : null;
+          console.log('Post:', post.title, 'Image Path:', post.image_url, 'Public URL:', imageUrl); // Debug log
+
+      return {
+        ...post,
+        image_url: post.image_url
+         
+      };
+    })
+  );
+    const validPosts = postsWithUrl.filter((post): post is NonNullable<typeof post> => post !== null);
 
   return (
     <div className="w-[80%] mx-auto">
-
-      {data && data.map(({ id, title, slug, users, created_at }) =>
-        <Link href={`/${slug}`} className="block border rounded mt-4  p-4" key={id}>
-          <h2 className="font-bold text-xl">{title}</h2>
-            <p className="text-sm text-gray-500 mb-1 italic">
-              {formatDate(created_at)} • {timeAgo(created_at)}
-            </p>
-          <div className="text-right">by{users.username}</div>
-        </Link>)}
+      <HomePosts posts={validPosts}/>
     </div>
   )
 }

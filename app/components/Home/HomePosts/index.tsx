@@ -1,34 +1,28 @@
 'use client'
-import { createClient } from "@/utils/supabase/browser-client";
-import { getHomePosts, HomePostType } from "@/utils/supabase/queries";
+import { HomePostType } from "@/utils/supabase/queries";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import { formatDate, timeAgo } from "@/utils/formatDate";
+import Link from "next/link";
 
 const HomePosts = ({ posts }: { posts: HomePostType }) => {
     const { data } = useQuery({
         queryKey: ['home-posts'],
-        queryFn: async () => {
-            const supabase = createClient();
-            const { data, error } = await getHomePosts(supabase);
-            if (error) throw error;
-            return data;
-        },
+        queryFn: () => posts,
         initialData: posts,
         refetchOnMount: false,
         staleTime: 10000,
     });
 
     return (
-        <div className="w-full max-w-6xl mx-auto p-6">
-            <div className="bg-[url('/image1.jpg')] bg-cover bg-center rounded-4xl">
-                <div className="flex flex-row flex-wrap gap-6 justify-center items-center p-6">
+        <div className=" max-w-6xl mx-auto p-6">
+            <div>
+                <div className="flex flex-row flex-wrap gap-6 justify-center items-center">
                     {data &&
                         data.map(({ id, slug, title, users, image_url, created_at }) => (
                             <Link
                                 href={`/${slug}`}
                                 key={id}
-                                className="w-1/3 bg-neutral-900/80 border border-neutral-800 rounded-2xl shadow-lg p-10 flex flex-col justify-between hover:scale-105 hover:shadow-blue-950 transition-all"
+                                className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 bg-neutral-900/80 border border-neutral-800 rounded-2xl shadow-lg p-6 flex flex-col justify-between hover:scale-105 hover:shadow-blue-950 transition-all"
                             >
                                 {image_url && (
                                     <img

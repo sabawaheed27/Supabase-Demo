@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import { getSearchedPosts } from "@/utils/supabase/queries";
 import { useQuery } from "@tanstack/react-query";
 
+
 const SearchInput = () => {
   const [userInput, setUserInput] = useState<string>("");
 
