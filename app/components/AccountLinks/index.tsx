@@ -4,19 +4,19 @@ import LogOutButton from "./LogOutButton";
 
 const AccountLinks = async () => {
   const supabase = await createClient();
-
-  const {data: { user },} = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 sm:gap-3">
       {user ? (
         <>
           {/* Create Post button */}
           <Link
             href="/create"
-            className="px-3 py-1.5 rounded-full text-sm font-medium text-white bg-[#FF4500]
-                       hover:bg-[#e03d00] transition-colors" >
-            Create Post
+            className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium 
+                       text-white bg-[#FF4500] hover:bg-[#e03d00] transition-colors whitespace-nowrap">
+            Create
+            <span className="hidden sm:inline"> Post</span>
           </Link>
 
           {/* Logout button */}
@@ -27,8 +27,8 @@ const AccountLinks = async () => {
           {/* Sign up */}
           <Link
             href="/auth/signup"
-            className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-indigo-600 
-                       hover:bg-indigo-700 transition-colors shadow-sm">
+            className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-medium 
+                       text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-sm whitespace-nowrap">
             Sign Up
           </Link>
         </>
