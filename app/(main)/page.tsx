@@ -1,7 +1,6 @@
 
 import { getHomePosts } from "@/utils/supabase/queries";
 import { createClient } from "@/utils/supabase/server-client";
-// import HomePosts from "../components/Home/HomePosts"; 
 import HomePosts from "@/app/components/Home/HomePosts";
 
 export const revalidate = 600;
@@ -42,3 +41,4 @@ export default async function Home() {
 //The data is passed as a prop into <HomePosts />.
 //This avoids running a network request on the client at page load,
 // so the page is server-side rendered with posts already included
+
