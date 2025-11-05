@@ -38,7 +38,7 @@ export async function getCommentsForPost(postId: number) {
     .from("comments") // Corrected in previous step
     .select("id, content, created_at, user_id, users(username, id)")
     .eq("post_id", postId)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Failed to fetch comments:", error);

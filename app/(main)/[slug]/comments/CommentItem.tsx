@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -6,9 +7,14 @@ import { toast } from 'sonner';
 import { User } from '@supabase/supabase-js';
 import { CommentWithUser } from '@/utils/supabase/types';
 import { updateComment } from '@/action/update-comment';
+import { timeAgo } from '@/utils/formatDate'; 
 import DeleteCommentButton from './DeleteCommentButton';
 
-export default function CommentItem({comment,user,postSlug,}: {
+export default function CommentItem({
+  comment,
+  user,
+  postSlug,
+}: {
   comment: CommentWithUser;
   user: User | null;
   postSlug: string;
@@ -24,7 +30,7 @@ export default function CommentItem({comment,user,postSlug,}: {
     if (result.success) {
       toast.success('Comment updated!');
       setIsEditing(false);
-      router.refresh(); // Refresh to show the updated comment
+      router.refresh();
     } else {
       toast.error(result.error || 'Failed to update comment.');
     }
@@ -38,7 +44,8 @@ export default function CommentItem({comment,user,postSlug,}: {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="border rounded p-2 w-full text-sm"
-            rows={3}/>
+            rows={3}
+          />
           <div className="flex gap-2">
             <button
               onClick={handleUpdate}
@@ -48,24 +55,28 @@ export default function CommentItem({comment,user,postSlug,}: {
             <button
               onClick={() => {
                 setIsEditing(false);
-                setContent(comment.content); // Reset content on cancel
+                setContent(comment.content);
               }}
-              className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm" >
+              className="bg-gray-200 text-gray-700 px-3 py-1 rounded text-sm">
               Cancel
             </button>
           </div>
         </div>
       ) : (
         <div className="flex justify-between items-start gap-4">
-          {/* Comment Content */}
-          <div>
+          <div className="flex-1">
             <p className="text-gray-800">{comment.content}</p>
-            <p className="text-sm text-gray-500 mt-1">
-              by {comment.users?.username || 'Unknown user'}
-            </p>
+            <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
+              <span>by {comment.users?.username || 'Unknown user'}</span>
+              {comment.created_at && (
+                <>
+                  <span>•</span>
+                  <span>{timeAgo(comment.created_at)}</span>
+                </>
+              )}
+            </div>
           </div>
 
-          {/* Action Buttons */}
           {isAuthor && (
             <div className="flex gap-2 shrink-0">
               <button
@@ -81,3 +92,4 @@ export default function CommentItem({comment,user,postSlug,}: {
     </li>
   );
 }
+
