@@ -2,8 +2,8 @@ import Logo from "../components/Logo";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <header className="w-full flex justify-center items-center py-4 sm:py-6 shadow-sm bg-white">
+    <div className="min-h-screen flex flex-col bg-linear-to-br from-gray-50 to-gray-100">
+      <header className="w-full flex justify-center items-center py-4 sm:py-6 shadow-sm bg-white border-b border-gray-200">
         <Logo />
       </header>
       <main className="flex-1 flex items-center justify-center px-4 py-6 sm:py-8">
@@ -11,6 +11,9 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </div>
       </main>
+      <footer className="py-4 text-center text-xs sm:text-sm text-gray-500">
+        © {new Date().getFullYear()} The Quad. All rights reserved.
+      </footer>
     </div>
   );
 };
