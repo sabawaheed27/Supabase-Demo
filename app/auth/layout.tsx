@@ -11,9 +11,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           {children}
         </div>
       </main>
-      <footer className="py-4 text-center text-xs sm:text-sm text-gray-500">
-        © {new Date().getFullYear()} The Quad. All rights reserved.
-      </footer>
+    
     </div>
   );
 };

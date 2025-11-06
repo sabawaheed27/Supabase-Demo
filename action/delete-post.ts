@@ -3,6 +3,7 @@
 
 import { createClient } from "@/utils/supabase/server-client"
 import { revalidatePath } from "next/cache"
+import { redirect } from "next/navigation"
 
 const DeletePost = async (postId: number) => {
     try {
@@ -19,9 +20,10 @@ const DeletePost = async (postId: number) => {
 
         // Revalidate all relevant paths
         revalidatePath("/")
-        revalidatePath("/posts")
+        // revalidatePath("/posts")
+        redirect("/")
         
-        // DO NOT use redirect() here - let the client handle navigation
+
         return { success: true }
         
     } catch (error) {
