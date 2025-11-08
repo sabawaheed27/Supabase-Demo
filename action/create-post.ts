@@ -1,6 +1,5 @@
 "use server";
 
-
 import { postSchema } from "./schema"; 
 import { uploadImage } from "@/utils/uploadImage";
 import { slugify } from "@/utils/slugify";
@@ -38,31 +37,56 @@ export default async function CreatePost(formData: FormData) {
     }
     const { data: parsedData } = validatedFields;
 
-    // 3. Upload image if it exists
-    let imageUrl: string | undefined = undefined;
-    if (parsedData.image) {
-      imageUrl = await uploadImage(parsedData.image);
+    // 3. Upload image if it exists (with better error handling)
+    let imageUrl: string | null = null;  //  Changed to null instead of undefined
+    
+    if (parsedData.image && parsedData.image.size > 0) {  //  Check file size
+      try {
+        imageUrl = await uploadImage(parsedData.image);
+        console.log('✅ Image uploaded successfully:', imageUrl);
+      } catch (uploadError) {
+        console.error(' Image upload failed:', uploadError);
+        // Continue without image instead of failing the entire post
+        imageUrl = null;
+      }
+    } else {
+      console.log('ℹ No image provided - creating post without image');
     }
 
     // 4. Generate a slug
     slug = slugify(parsedData.title);
 
-    // 5. Insert post into the database
-    const { error: insertError } = await supabase.from("posts").insert({
-      user_id: user.id,
-      slug,
+    console.log('Creating post with:', {
       title: parsedData.title,
       content: parsedData.content,
+      slug,
       image_url: imageUrl,
-    }).select('slug').single();
+      user_id: user.id
+    });
+
+    // 5. Insert post into the database
+    const { data: newPost, error: insertError } = await supabase
+      .from("posts")
+      .insert({
+        user_id: user.id,
+        slug,
+        title: parsedData.title,
+        content: parsedData.content,
+        image_url: imageUrl,  
+      })
+      .select('slug')
+      .single();
 
     if (insertError) {
       console.error("Database insert error:", insertError);
-      return { error: "Could not save the post to the database." };
+      return { error: "Could not save the post to the database: " + insertError.message };
     }
+
+    console.log(' Post created successfully:', newPost);
+
   } catch (e) {
     const err = e as Error;
-    console.error("An unexpected error occurred:", err.message);
+    console.error(" An unexpected error occurred:", err.message);
     return { error: "An unexpected error occurred. Please try again." };
   }
 
@@ -71,7 +95,6 @@ export default async function CreatePost(formData: FormData) {
   if (slug) {
     redirect(`/${slug}`);
   } else {
-    // Fallback redirect if slug wasn't created for some reason
     redirect('/');
   }
 }

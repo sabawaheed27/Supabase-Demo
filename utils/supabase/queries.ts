@@ -29,13 +29,13 @@ export const getSearchedPosts = async (searchTerm: string) => {
     .select('id,title, slug')
     .ilike('title', `%${searchTerm}%`)
   )
-
 }
+
 export async function getCommentsForPost(postId: number) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from("comments") // Corrected in previous step
+    .from("comments")
     .select("id, content, created_at, user_id, users(username, id)")
     .eq("post_id", postId)
     .order("created_at", { ascending: false });

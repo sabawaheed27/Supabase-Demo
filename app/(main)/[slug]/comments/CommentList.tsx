@@ -14,11 +14,16 @@ export default async function CommentList({ postId, postSlug, user }: { postId: 
   return (
     <div>
       {comments.length === 0 ? (
-        <p>No comments yet.</p>
+        <p className="text-gray-500">No comments yet. Be the first to comment!</p>
       ) : (
         <ul className="space-y-2">
           {comments.map((comment: CommentWithUser) => (
-            <CommentItem key={comment.id} comment={comment} user={user} postSlug={postSlug} />
+            <CommentItem 
+              key={comment.id} 
+              comment={comment} 
+              user={user} 
+              postSlug={postSlug} 
+            />
           ))}
         </ul>
       )}
