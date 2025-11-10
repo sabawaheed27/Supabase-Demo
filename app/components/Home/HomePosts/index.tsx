@@ -4,15 +4,16 @@ import { formatDate, timeAgo } from "@/utils/formatDate";
 import Link from "next/link";
 
 const HomePosts = ({ posts }: { posts: HomePostType }) => {
-  //Temporarily bypass React Query to avoid caching issues
+  // Use props directly - no React Query caching
   const data = posts;
 
-  console.log('HomePosts rendering:', data.length, 'posts');
+  console.log(' HomePosts rendering:', data?.length || 0, 'posts');
 
   if (!data || data.length === 0) {
     return (
-      <div className="p-8">
-        <h2 className="text-2xl">No posts to display</h2>
+      <div className="p-8 text-center">
+        <h2 className="text-2xl text-gray-300">No posts to display</h2>
+        <p className="text-gray-400 mt-2">Be the first to create a post!</p>
       </div>
     );
   }
@@ -34,13 +35,13 @@ const HomePosts = ({ posts }: { posts: HomePostType }) => {
                   alt={title}
                   className="w-full h-40 object-cover rounded mb-4"
                   onError={(e) => {
-                    console.error('Image failed to load:', image_url);
+                    console.error(' Image failed to load:', image_url);
                     e.currentTarget.style.display = 'none';
                   }}
                 />
               ) : (
-                <div className="w-full h-40 bg-gradient-to-br from-neutral-800 to-neutral-700 rounded mb-4 flex items-center justify-center">
-                  <span className="text-5xl">📝</span>
+                <div className="w-full h-40 bg-linear-to-br from-neutral-800 to-neutral-700 rounded mb-4 flex items-center justify-center">
+                  <span className="text-5xl"></span>
                 </div>
               )}
               

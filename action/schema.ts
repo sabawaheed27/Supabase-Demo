@@ -16,10 +16,24 @@ export const postSchema = z.object({
      image: z
     .instanceof(File)
     .optional()
-    .refine((file) => !file || file.size <= 5_000_000, "Max 5MB upload size")
     .refine(
-      (file) =>
-        !file || ["image/jpeg", "image/png", "image/webp"].includes(file.type),
-      "Only .jpg, .png, .webp allowed"
+      (file) => {
+        //  Allow undefined, null, or empty file
+        if (!file) return true;
+        if (file.size === 0) return true;
+        // Only validate size if file exists and has content
+        return file.size <= 5_000_000;
+      },
+      "Max file size is 5MB"
+    )
+    .refine(
+      (file) => {
+        //  Allow undefined, null, or empty file
+        if (!file) return true;
+        if (file.size === 0) return true;
+        // Only validate type if file exists and has content
+        return ["image/jpeg", "image/png", "image/webp"].includes(file.type);
+      },
+      "Image must be .jpg, .png, or .webp"
     ),
-})
+});

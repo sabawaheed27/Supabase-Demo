@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 // Schema (validation rules)
 const clientPostSchema = postSchema.extend({
@@ -38,37 +39,42 @@ const CreatePage = () => {
   const [contentLength, setContentLength] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { 
-    register, 
-    handleSubmit, 
-    formState: { errors }, 
-    reset,
-  } = useForm<FormDataType>({
+  const { register, handleSubmit, formState: { errors }, reset, } = useForm<FormDataType>({
     resolver: zodResolver(clientPostSchema),
   });
 
   const { mutate, error, isPending } = useMutation({
     mutationFn: createPost,
-    onSuccess: () => {
-      // Show success message
-      setShowSuccess(true);
-      
-      // Clear form after success
-      reset();
-      setImagePreview(null);
-      setContentLength(0);
-      
-      // Invalidate and refetch posts
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-      
-      // Hide success message and redirect after 2 seconds
-      setTimeout(() => {
-        setShowSuccess(false);
-        router.push('/'); // Redirect to home page
-      }, 2000);
+    onSuccess: (result) => {
+      if (result?.success) {
+        console.log(' Post created successfully!');
+        // Show success message
+        setShowSuccess(true);
+        // Clear form after success
+        reset();
+        setImagePreview(null);
+        setContentLength(0);
+
+
+
+        //  CRITICAL: Invalidate React Query cache
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
+        queryClient.invalidateQueries({ queryKey: ['home-posts'] });
+        // Hide success message and redirect after 2 seconds
+        setTimeout(() => {
+          setShowSuccess(false);
+          window.location.href = '/';
+          // router.push('/'); // Redirect to home page
+        }, 2000);
+      } else if (result?.error) {
+        // Handle error from server action
+        console.error(' Error from server:', result.error);
+        toast.error(result.error);
+      }
     },
     onError: (error) => {
-      console.error("Failed to create post:", error);
+      console.error(" Mutation error:", error);
+      toast.error("Failed to create post. Please try again.");
     }
   });
 
@@ -120,7 +126,7 @@ const CreatePage = () => {
             mutate(formData);
           })}
           className="space-y-6">
-          
+
           {/* Title */}
           <div>
             <label
@@ -169,15 +175,15 @@ const CreatePage = () => {
                 {String(errors.image.message)}
               </p>
             )}
-            
+
             {/* Image Preview */}
             {imagePreview && (
               <div className="mt-4">
                 <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
                 <div className="relative">
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
                     className="max-h-64 w-full object-cover rounded-lg border border-gray-200"
                   />
                   <button

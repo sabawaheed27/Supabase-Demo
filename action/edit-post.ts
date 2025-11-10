@@ -20,7 +20,7 @@ export async function editPost(postId: number, updates: { title: string; content
       .eq("id", postId)
       .throwOnError();
     
- console.log("Post updated successfully in Supabase.");
+//  console.log("Post updated successfully in Supabase.");
 
     revalidatePath('/');
     revalidatePath(`/${updates.slug}`); // Revalidate using the new slug
