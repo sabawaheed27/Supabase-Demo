@@ -105,7 +105,7 @@ export default function CommentItem({
       ) : (
         <div className="flex justify-between items-start gap-4">
           <div className="flex-1">
-            <p className="text-gray-800 whitespace-pre-wrap break-words">{comment.content}</p>
+            <p className="text-gray-800 whitespace-pre-wrap-break-word">{comment.content}</p>
             <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
               <span>by {comment.users?.username || 'Unknown user'}</span>
               {comment.created_at && (
