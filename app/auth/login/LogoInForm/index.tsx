@@ -5,20 +5,37 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { logInSchema } from "@/action/schema"
 import { useMutation } from "@tanstack/react-query";
 import ErrorMessage from "@/app/components/ErrorMessage";
-
-
+import { useState } from "react";
+import { z } from "zod";
 
 const LogInForm = () => {
+    const [serverError, setServerError] = useState<string | null>(null);
+    
     const {
         register,
         handleSubmit,
-        formState: { errors } } = useForm({
-            resolver: zodResolver(logInSchema)
-        })
-
-    const { mutate, isPending, error } = useMutation({
-        mutationFn: LogIn,
+        formState: { errors } 
+    } = useForm<z.infer<typeof logInSchema>>({
+        resolver: zodResolver(logInSchema)
     })
+
+    const { mutate, isPending } = useMutation({
+        mutationFn: LogIn,
+        onSuccess: (result) => {
+            // If there's a result, it means there was an error
+            // If no result (undefined), the redirect happened successfully
+            if (result && result.error) {
+                setServerError(result.error);
+            } else {
+                setServerError(null);
+            }
+        },
+        onError: (error: any) => {
+            setServerError("An unexpected error occurred. Please try again.");
+            console.error("Login mutation error:", error);
+        }
+    });
+
     return (
         <>
             <form onSubmit={handleSubmit(values => mutate(values))}
@@ -40,6 +57,7 @@ const LogInForm = () => {
                      focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"/>
                     {errors.email && <ErrorMessage message={errors.email.message!} />}
                 </fieldset>
+
                 {/* Password */}
                 <fieldset className="flex flex-col space-y-1">
                     <label
@@ -52,9 +70,10 @@ const LogInForm = () => {
                         type="password"
                         id="password"
                         placeholder="Enter your password"
-                        className="w-full rounded-lg border-gray-300 px-4 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus: ring-2 focus: ring-blue-200 transition" />
+                        className="w-full rounded-lg border-gray-300 px-4 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition" />
                     {errors.password && <ErrorMessage message={errors.password.message!} />}
                 </fieldset>
+
                 {/* Submit Button */}
                 <button
                     type="submit"
@@ -63,11 +82,12 @@ const LogInForm = () => {
                     disabled={isPending}>
                     {isPending ? "Loading..." : "Log In"}
                 </button>
-
             </form>
-            {error && (
+
+            {/* Display server errors */}
+            {serverError && (
                 <div className="mt-4">
-                    <ErrorMessage message={error.message} />
+                    <ErrorMessage message={serverError} />
                 </div>
             )}
         </>

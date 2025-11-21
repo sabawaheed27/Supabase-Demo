@@ -37,7 +37,7 @@ export default async function Home() {
           imageUrl = post.image_url;
         } else {
           // It's a path, generate the public URL
-          imageUrl = supabase.storage.from("posts").getPublicUrl(post.image_url).data.publicUrl;
+          imageUrl = supabase.storage.from("images").getPublicUrl(post.image_url).data.publicUrl;
         }
       }
 

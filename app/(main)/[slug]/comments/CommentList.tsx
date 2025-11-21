@@ -1,10 +1,15 @@
+
 import { getCommentsForPost } from "@/utils/supabase/queries";
 import { CommentWithUser } from "@/utils/supabase/types";
 import { User } from "@supabase/supabase-js";
 import CommentItem from "./CommentItem";
 
-
-export default async function CommentList({ postId, postSlug, user }: { postId: number; postSlug: string, user: User | null }) {
+export default async function CommentList({  postId,  postSlug,  postAuthorId,  user }: { 
+  postId: number; 
+  postSlug: string;
+  postAuthorId: string; // Add this prop
+  user: User | null;
+}) {
   const { data: comments, error } = await getCommentsForPost(postId);
 
   if (error) {
@@ -22,7 +27,8 @@ export default async function CommentList({ postId, postSlug, user }: { postId: 
               key={comment.id} 
               comment={comment} 
               user={user} 
-              postSlug={postSlug} 
+              postSlug={postSlug}
+              postAuthorId={postAuthorId} 
             />
           ))}
         </ul>

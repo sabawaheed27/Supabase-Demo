@@ -1,39 +1,25 @@
-
-import { v4 as uuidv4 } from "uuid";
-import { slugify } from "./slugify";
-import { createClient } from "./supabase/server-client";
-
-
+// utils/uploadImage.ts
+import { createClient } from "@/utils/supabase/server-client";
 
 export async function uploadImage(file: File): Promise<string> {
   const supabase = await createClient();
-  const fileParts = file.name.split(".");
-  const fileExtension = fileParts.length > 1 ? fileParts.pop() : "";
-  const baseFileName = fileParts.join(".");
-
-  // It's good practice to handle cases where there might not be an extension.
-  const cleanFileName = slugify(baseFileName);
-  const fileName = `${uuidv4()}-${cleanFileName}.${fileExtension}`;
-
+  
+  // Generate unique filename
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+  
+  // Upload to Supabase Storage - CHANGE 'posts' to 'images'
   const { data, error } = await supabase.storage
-    .from("images")
-    .upload(fileName, file);
+    .from('images')  
+    .upload(fileName, file, {
+      cacheControl: '3600',
+      upsert: false
+    });
 
   if (error) {
-    // Log the full error object for more details
-    console.error("Error uploading image to Supabase:", error);
-    throw new Error("Failed to upload image.");
+    throw new Error(`Upload failed: ${error.message}`);
   }
 
-  // console.log("Image uploaded successfully:", data);
-
-  const { data: publicUrlData } = supabase.storage
-    .from("images")
-    .getPublicUrl(fileName);
-
-  if (!publicUrlData?.publicUrl) {
-    throw new Error("Could not get public URL for the image.");
-  }
-
-  return publicUrlData.publicUrl;
+  // Return the path (not the full URL)
+  return data.path;
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -9,21 +10,25 @@ import { updateComment } from '@/action/update-comment';
 import { timeAgo } from '@/utils/formatDate';
 import DeleteCommentButton from './DeleteCommentButton';
 
-export default function CommentItem({
-  comment,
-  user,
-  postSlug,
-}: {
+export default function CommentItem({ comment, user, postSlug, postAuthorId, }: {
   comment: CommentWithUser;
   user: User | null;
   postSlug: string;
-}) {
+  postAuthorId: string; }) 
+  {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(comment.content);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const isAuthor = user && user.id === comment.users?.id;
+  const isCommentAuthor = user && user.id === comment.users?.id;
+  const isPostAuthor = user && user.id === postAuthorId;
+  
+  // User can delete if they're the comment author OR the post author
+  const canDelete = isCommentAuthor || isPostAuthor;
+  
+  // Only comment author can edit
+  const canEdit = isCommentAuthor;
 
   const handleUpdate = async () => {
     const trimmedContent = content.trim();
@@ -105,9 +110,15 @@ export default function CommentItem({
       ) : (
         <div className="flex justify-between items-start gap-4">
           <div className="flex-1">
-            <p className="text-gray-800 whitespace-pre-wrap-break-word">{comment.content}</p>
+            <p className="text-gray-800 whitespace-pre-wrap break-words">{comment.content}</p>
             <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
               <span>by {comment.users?.username || 'Unknown user'}</span>
+              {/* Show "Author" badge if commenter is the post author */}
+              {comment.users?.id === postAuthorId && (
+                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                  Author
+                </span>
+              )}
               {comment.created_at && (
                 <>
                   <span>•</span>
@@ -117,15 +128,20 @@ export default function CommentItem({
             </div>
           </div>
 
-          {isAuthor && (
+          {/* Show action buttons if user can edit or delete */}
+          {(canEdit || canDelete) && (
             <div className="flex gap-2 shrink-0">
-              <button
-                onClick={() => setIsEditing(true)}
-                className="text-blue-500 text-xs font-semibold hover:underline"
-              >
-                Edit
-              </button>
-              <DeleteCommentButton commentId={comment.id} postSlug={postSlug} />
+              {canEdit && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-blue-500 text-xs font-semibold hover:underline"
+                >
+                  Edit
+                </button>
+              )}
+              {canDelete && (
+                <DeleteCommentButton commentId={comment.id} postSlug={postSlug} />
+              )}
             </div>
           )}
         </div>

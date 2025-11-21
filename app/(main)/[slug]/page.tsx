@@ -1,4 +1,3 @@
-
 import { createClient } from "@/utils/supabase/server-client";
 import DeleteButton from "./DeleteButton";
 import { getSinglePost } from "@/utils/supabase/queries";
@@ -7,7 +6,7 @@ import CommentList from "./comments/CommentList";
 import CommentForm from "./comments/CommentForm";
 
 const SinglePost = async ({ params }: { params: { slug: string } }) => {
-    const { slug } =  await params;
+    const { slug } = await params;
     const supabase = await createClient();
 
     // Fetch post data
@@ -22,21 +21,30 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
     }
 
     // Get current user
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
+    const {data: { user }, } = await supabase.auth.getUser();
 
     const isAuthor = user?.id === data.user_id;
+
+    // Process image URL - convert path to full URL
+    let imageUrl = null;
+    if (data.image_url) {
+        if (data.image_url.startsWith('http://') || data.image_url.startsWith('https://')) {
+            imageUrl = data.image_url;
+        } else {
+            imageUrl = supabase.storage.from("images").getPublicUrl(data.image_url).data.publicUrl;
+        }
+    }
 
     return (
         <>
             <div className="max-w-3xl mx-auto my-12 p-6 rounded-lg shadow-md bg-white">
                 <h1 className="text-3xl font-bold mb-4">{data.title}</h1>
-                {data.image_url && (
+                {imageUrl && (
                     <img
-                        src={data.image_url}
+                        src={imageUrl}
                         alt={data.title}
-                        className="w-full h-auto object-cover rounded-lg my-4"/>
+                        className="w-full h-auto object-cover rounded-lg my-4"
+                    />
                 )}
                 <p className="mt-6 text-gray-500 text-right">
                     By {data.users.username}
@@ -60,10 +68,13 @@ const SinglePost = async ({ params }: { params: { slug: string } }) => {
             <div className="max-w-2xl mx-auto mt-8 p-6 bg-white rounded-lg shadow">
                 <h2 className="text-xl font-semibold mb-4">Comments</h2>
 
-                {/* Comment list (shows all comments) */}
-                <CommentList postId={data.id} postSlug={data.slug} user={user} />
+                <CommentList 
+                    postId={data.id} 
+                    postSlug={data.slug} 
+                    postAuthorId={data.user_id}
+                    user={user} 
+                />
 
-                {/* Comment form (only visible if logged in) */}
                 {user ? (
                     <CommentForm postId={data.id} postSlug={data.slug} />
                 ) : (

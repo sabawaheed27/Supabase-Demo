@@ -6,19 +6,36 @@ import { SignUp } from "@/action/sign-up"
 import ErrorMessage from "@/app/components/ErrorMessage"
 import { signUpSchema } from "@/action/schema"
 import Link from "next/link"
+import { useState } from "react"
+import { z } from "zod"
 
 const SignUpForm = () => {
+  const [serverError, setServerError] = useState<string | null>(null);
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
   })
 
-  const { mutate, error, isPending } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: SignUp,
-  })
+    onSuccess: (result) => {
+      // If there's a result, it means there was an error
+      // If no result (undefined), the redirect happened successfully
+      if (result && result.error) {
+        setServerError(result.error);
+      } else {
+        setServerError(null);
+      }
+    },
+    onError: (error: any) => {
+      setServerError("An unexpected error occurred. Please try again.");
+      console.error("Sign up mutation error:", error);
+    }
+  });
 
   return (
     <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 w-full">
@@ -90,9 +107,10 @@ const SignUpForm = () => {
         </button>
       </form>
 
-      {error && (
+      {/* Display server errors */}
+      {serverError && (
         <p className="mt-4 text-center text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-3">
-          {error.message}
+          {serverError}
         </p>
       )}
 
